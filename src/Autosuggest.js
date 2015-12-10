@@ -35,6 +35,7 @@ export default class Autosuggest extends Component { // eslint-disable-line no-s
     this.cache = {};
     this.state = {
       value: props.inputAttributes.value || '',
+      tags: [],
       suggestions: null,
       focusedSectionIndex: null,    // Used when multiple sections are displayed
       focusedSuggestionIndex: null, // Index within a section
@@ -262,8 +263,11 @@ export default class Autosuggest extends Component { // eslint-disable-line no-s
 
   onInputChange(event) {
     const newValue = event.target.value;
+    const tags = event.target.value;
 
     this.onSuggestionUnfocused();
+    this.setState({tags});
+  }
 
     if (newValue !== this.state.value) {
       this.onChange(newValue);
@@ -509,15 +513,33 @@ export default class Autosuggest extends Component { // eslint-disable-line no-s
     );
   }
 
+  handleChange(tags) {
+    this.setState({tags})
+  }
+
   render() {
     const ariaActivedescendant =
       this.getSuggestionId(this.state.focusedSectionIndex, this.state.focusedSuggestionIndex);
 
     return (
       <div className="react-autosuggest">
-        <input {...this.props.inputAttributes}
-               type={this.props.inputAttributes.type || 'text'}
-               value={this.state.value}
+        <TagsInput {...inputAttributes}
+               type={inputAttributes.type || 'text'}
+               value={this.state.tags}
+               autoComplete="off"
+               role="combobox"
+               aria-autocomplete="list"
+               aria-owns={'react-autosuggest-' + id}
+               aria-expanded={suggestions !== null}
+               aria-activedescendant={ariaActivedescendant}
+               ref="input"
+               onChange={this.onInputChange}
+               onKeyDown={this.onInputKeyDown}
+               onFocus={this.onInputFocus}
+               onBlur={this.onInputBlur} />
+        <input {...inputAttributes}
+               type={inputAttributes.type || 'text'}
+               value={value}
                autoComplete="off"
                role="combobox"
                aria-autocomplete="list"
